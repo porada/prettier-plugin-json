@@ -1,5 +1,20 @@
 import type { Parser, ParserOptions, Plugin } from 'prettier';
 
+export interface PluginOptions {
+	/**
+	 * Control wrapping for arrays and objects. `collapse` formats collections
+	 * on a single line when they fit within the configured line length.
+	 * `expand` always uses the multi-line format for non-empty collections.
+	 * `inherit` follows Prettier’s wrapping behavior for the current parser.
+	 * @default 'expand'
+	 */
+	jsonCollectionWrap?: 'collapse' | 'expand' | 'inherit' | undefined;
+}
+
+declare module 'prettier' {
+	interface Options extends PluginOptions {}
+}
+
 export type ParserDelegation = {
 	hook: ParserHookName;
 	parserName: ParserName;

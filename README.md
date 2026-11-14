@@ -91,23 +91,28 @@ If you’re using any other JSON plugins, make sure `prettier-plugin-expand-json
 }
 ```
 
-## FAQ
+## Options
 
-### What does expanded JSON look like?
+In addition to Prettier’s [built-in options](https://prettier.io/docs/options) that affect JSON formatting, `prettier-plugin-expand-json` offers additional configuration options.
 
-The layout follows `JSON.stringify` with indentation: arrays and objects are expanded into a multi-line format, while empty arrays and objects stay compact.
-
-<!-- prettier-ignore -->
-```json
-{
-    "extends": "@standard-config/tsconfig",
-    "compilerOptions": {
-        "types": ["node", "vitest/globals"]
-    }
+```ts
+interface PluginOptions {
+    /**
+     * Control wrapping for arrays and objects. `collapse` formats collections
+     * on a single line when they fit within the configured line length.
+     * `expand` always uses the multi-line format for non-empty collections.
+     * `inherit` follows Prettier’s wrapping behavior for the current parser.
+     * @default 'expand'
+     */
+    jsonCollectionWrap?: 'collapse' | 'expand' | 'inherit' | undefined;
 }
 ```
 
-…will be formatted as:
+## FAQ
+
+### How do `expand` and `collapse` affect JSON wrapping?
+
+With `expand`, the default value, each array item and object property starts on a separate line. Empty arrays and objects stay compact.
 
 ```json
 {
@@ -121,9 +126,23 @@ The layout follows `JSON.stringify` with indentation: arrays and objects are exp
 }
 ```
 
+With `collapse`, collections are formatted on a single line when they fit within the configured `printWidth`.
+
+<!-- prettier-ignore -->
+```json
+{
+    "extends": "@standard-config/tsconfig",
+    "compilerOptions": { "types": ["node", "vitest/globals"] }
+}
+```
+
+Please note that both `expand` and `collapse` override the configured [`objectWrap`](https://prettier.io/docs/options#object-wrap) value.
+
 ### Does this plugin work with files like `package.json` and `composer.json`?
 
 Yes. Prettier uses a separate parser called `json-stringify` to match the formatting of the tools that update these files. This plugin supports that parser, too.
+
+That said, `json-stringify` always expands non-empty arrays and objects, and `jsonCollectionWrap` can’t override that behavior.
 
 ## Related
 

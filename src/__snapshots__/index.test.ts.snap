@@ -18,7 +18,20 @@ exports[`JSON > expands input embedded in Markdown 1`] = `
     ]
   },
   "quux": [], // Comment 4
-  "corge": {}
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
 }
 \`\`\`
 "
@@ -41,7 +54,20 @@ exports[`JSON > expands non-empty arrays and objects 1`] = `
     ]
   },
   "quux": [], // Comment 4
-  "corge": {}
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
 }
 "
 `;
@@ -63,7 +89,20 @@ exports[`JSON > formats output from other plugins’ parser hooks 1`] = `
     1,
     2
   ],
-  "quux": [] // Comment 4
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "quux": [], // Comment 4
+  "xyzzy": {
+    "thud": 9
+  }
 }
 "
 `;
@@ -85,7 +124,20 @@ exports[`JSON > respects \`tabWidth\` 1`] = `
         ]
     },
     "quux": [], // Comment 4
-    "corge": {}
+    "corge": {},
+    "grault": [
+        {
+            "garply": 5,
+            "waldo": 6
+        },
+        {
+            "fred": 7,
+            "plugh": 8
+        }
+    ],
+    "xyzzy": {
+        "thud": 9
+    }
 }
 "
 `;
@@ -107,9 +159,88 @@ exports[`JSON > respects \`useTabs\` 1`] = `
 		]
 	},
 	"quux": [], // Comment 4
-	"corge": {}
+	"corge": {},
+	"grault": [
+		{
+			"garply": 5,
+			"waldo": 6
+		},
+		{
+			"fred": 7,
+			"plugh": 8
+		}
+	],
+	"xyzzy": {
+		"thud": 9
+	}
 }
 "
+`;
+
+exports[`JSON > supports \`jsonCollectionWrap\` 1`] = `
+{
+  "collapse": "{
+  // Comment 1
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
+  // Comment 3
+  "baz": { "qux": [4] },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [{ "garply": 5, "waldo": 6 }, { "fred": 7, "plugh": 8 }],
+  "xyzzy": { "thud": 9 }
+}
+",
+  "expand": "{
+  // Comment 1
+  "foo": [
+    1,
+    2
+  ],
+  "bar": /* Comment 2 */ [
+    3
+  ],
+  // Comment 3
+  "baz": {
+    "qux": [
+      4
+    ]
+  },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
+}
+",
+  "inherit": "{
+  // Comment 1
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
+  // Comment 3
+  "baz": { "qux": [4] },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [
+    { "garply": 5, "waldo": 6 },
+    { "fred": 7, "plugh": 8 }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
+}
+",
+}
 `;
 
 exports[`JSON.stringify > expands input embedded in Markdown 1`] = `
@@ -128,7 +259,20 @@ exports[`JSON.stringify > expands input embedded in Markdown 1`] = `
     ]
   },
   "quux": [],
-  "corge": {}
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
 }
 \`\`\`
 "
@@ -149,7 +293,20 @@ exports[`JSON.stringify > expands non-empty arrays and objects 1`] = `
     ]
   },
   "quux": [],
-  "corge": {}
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
 }
 "
 `;
@@ -179,7 +336,20 @@ exports[`JSON.stringify > respects \`tabWidth\` 1`] = `
         ]
     },
     "quux": [],
-    "corge": {}
+    "corge": {},
+    "grault": [
+        {
+            "garply": 5,
+            "waldo": 6
+        },
+        {
+            "fred": 7,
+            "plugh": 8
+        }
+    ],
+    "xyzzy": {
+        "thud": 9
+    }
 }
 "
 `;
@@ -199,9 +369,117 @@ exports[`JSON.stringify > respects \`useTabs\` 1`] = `
 		]
 	},
 	"quux": [],
-	"corge": {}
+	"corge": {},
+	"grault": [
+		{
+			"garply": 5,
+			"waldo": 6
+		},
+		{
+			"fred": 7,
+			"plugh": 8
+		}
+	],
+	"xyzzy": {
+		"thud": 9
+	}
 }
 "
+`;
+
+exports[`JSON.stringify > supports \`jsonCollectionWrap\` 1`] = `
+{
+  "collapse": "{
+  "foo": [
+    1,
+    2
+  ],
+  "bar": [
+    3
+  ],
+  "baz": {
+    "qux": [
+      4
+    ]
+  },
+  "quux": [],
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
+}
+",
+  "expand": "{
+  "foo": [
+    1,
+    2
+  ],
+  "bar": [
+    3
+  ],
+  "baz": {
+    "qux": [
+      4
+    ]
+  },
+  "quux": [],
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
+}
+",
+  "inherit": "{
+  "foo": [
+    1,
+    2
+  ],
+  "bar": [
+    3
+  ],
+  "baz": {
+    "qux": [
+      4
+    ]
+  },
+  "quux": [],
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
+}
+",
+}
 `;
 
 exports[`JSONC > expands input embedded in Markdown 1`] = `
@@ -223,6 +501,19 @@ exports[`JSONC > expands input embedded in Markdown 1`] = `
   },
   "quux": [], // Comment 4
   "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6,
+    },
+    {
+      "fred": 7,
+      "plugh": 8,
+    },
+  ],
+  "xyzzy": {
+    "thud": 9,
+  },
 }
 \`\`\`
 "
@@ -246,6 +537,19 @@ exports[`JSONC > expands non-empty arrays and objects 1`] = `
   },
   "quux": [], // Comment 4
   "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6,
+    },
+    {
+      "fred": 7,
+      "plugh": 8,
+    },
+  ],
+  "xyzzy": {
+    "thud": 9,
+  },
 }
 "
 `;
@@ -278,6 +582,19 @@ exports[`JSONC > respects \`tabWidth\` 1`] = `
     },
     "quux": [], // Comment 4
     "corge": {},
+    "grault": [
+        {
+            "garply": 5,
+            "waldo": 6,
+        },
+        {
+            "fred": 7,
+            "plugh": 8,
+        },
+    ],
+    "xyzzy": {
+        "thud": 9,
+    },
 }
 "
 `;
@@ -301,6 +618,19 @@ exports[`JSONC > respects \`trailingComma\` 1`] = `
   },
   "quux": [], // Comment 4
   "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6,
+    },
+    {
+      "fred": 7,
+      "plugh": 8,
+    },
+  ],
+  "xyzzy": {
+    "thud": 9,
+  },
 }
 ",
   "none": "{
@@ -319,7 +649,20 @@ exports[`JSONC > respects \`trailingComma\` 1`] = `
     ]
   },
   "quux": [], // Comment 4
-  "corge": {}
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6
+    },
+    {
+      "fred": 7,
+      "plugh": 8
+    }
+  ],
+  "xyzzy": {
+    "thud": 9
+  }
 }
 ",
 }
@@ -343,6 +686,85 @@ exports[`JSONC > respects \`useTabs\` 1`] = `
 	},
 	"quux": [], // Comment 4
 	"corge": {},
+	"grault": [
+		{
+			"garply": 5,
+			"waldo": 6,
+		},
+		{
+			"fred": 7,
+			"plugh": 8,
+		},
+	],
+	"xyzzy": {
+		"thud": 9,
+	},
 }
 "
+`;
+
+exports[`JSONC > supports \`jsonCollectionWrap\` 1`] = `
+{
+  "collapse": "{
+  // Comment 1
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
+  // Comment 3
+  "baz": { "qux": [4] },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [{ "garply": 5, "waldo": 6 }, { "fred": 7, "plugh": 8 }],
+  "xyzzy": { "thud": 9 },
+}
+",
+  "expand": "{
+  // Comment 1
+  "foo": [
+    1,
+    2,
+  ],
+  "bar": /* Comment 2 */ [
+    3,
+  ],
+  // Comment 3
+  "baz": {
+    "qux": [
+      4,
+    ],
+  },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [
+    {
+      "garply": 5,
+      "waldo": 6,
+    },
+    {
+      "fred": 7,
+      "plugh": 8,
+    },
+  ],
+  "xyzzy": {
+    "thud": 9,
+  },
+}
+",
+  "inherit": "{
+  // Comment 1
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
+  // Comment 3
+  "baz": { "qux": [4] },
+  "quux": [], // Comment 4
+  "corge": {},
+  "grault": [
+    { "garply": 5, "waldo": 6 },
+    { "fred": 7, "plugh": 8 },
+  ],
+  "xyzzy": {
+    "thud": 9,
+  },
+}
+",
+}
 `;

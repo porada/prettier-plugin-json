@@ -1,4 +1,5 @@
 import type { Plugin } from 'prettier';
+import type { PluginOptions } from './index.ts';
 import { format, formatWithCursor } from 'prettier';
 import * as pluginSortJSON from 'prettier-plugin-sort-json';
 import * as pluginBabel from 'prettier/plugins/babel';
@@ -15,6 +16,8 @@ test('exposes correct public API', () => {
 	expect(pluginExpandJSON).toHaveProperty('printers');
 	expect(pluginExpandJSON.printers).toHaveProperty('estree-expand-json');
 	expect(pluginExpandJSON.printers).toHaveProperty('estree-json');
+
+	expectTypeOf<PluginOptions>().toBeObject();
 });
 
 const TEST_JSON = `{
@@ -22,7 +25,11 @@ const TEST_JSON = `{
 	"bar": [3],
 	"baz": { "qux": [4] },
 	"quux": [],
-	"corge": {}
+	"corge": {},
+	"grault": [{ "garply": 5, "waldo": 6 }, { "fred": 7, "plugh": 8 }],
+	"xyzzy": {
+		"thud": 9
+	}
 }`;
 
 const TEST_JSONC = `{
@@ -33,6 +40,10 @@ const TEST_JSONC = `{
 	"baz": { "qux": [4] },
 	"quux": [], // Comment 4
 	"corge": {},
+	"grault": [{ "garply": 5, "waldo": 6 }, { "fred": 7, "plugh": 8 }],
+	"xyzzy": {
+		"thud": 9
+	},
 }`;
 
 const TESTS = [
@@ -327,6 +338,44 @@ ${selectedInput},
 
 		expect(output).toMatchSnapshot();
 		await expect(format(output, options)).resolves.toBe(output);
+	});
+
+	test('supports `jsonCollectionWrap`', async () => {
+		const options = {
+			collapse: {
+				jsonCollectionWrap: 'collapse' as const,
+				parser,
+				plugins: [pluginExpandJSON],
+			},
+			expand: {
+				jsonCollectionWrap: 'expand' as const,
+				parser,
+				plugins: [pluginExpandJSON],
+			},
+			inherit: {
+				jsonCollectionWrap: 'inherit' as const,
+				parser,
+				plugins: [pluginExpandJSON],
+			},
+		};
+
+		const outputs = {
+			collapse: await format(input, options.collapse),
+			expand: await format(input, options.expand),
+			inherit: await format(input, options.inherit),
+		};
+
+		expect(outputs).toMatchSnapshot();
+		await expect(format(outputs.collapse, options.collapse)).resolves.toBe(
+			outputs.collapse
+		);
+		await expect(format(outputs.expand, options.expand)).resolves.toBe(
+			outputs.expand
+		);
+		await expect(format(outputs.inherit, options.inherit)).resolves.toBe(
+			outputs.inherit
+		);
+		await expect(format(input, { parser })).resolves.toBe(outputs.inherit);
 	});
 
 	test('formats output from other plugins’ parser hooks', async () => {

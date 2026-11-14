@@ -336,8 +336,8 @@ function hasParsers(plugin: unknown): plugin is PluginWithParsers {
 }
 
 /**
- * Preserves lifecycle changes while invoking a prior hook.
- * Only a successful parse adopts the parser’s unchanged location functions.
+ * Preserves lifecycle changes while invoking a prior hook. Only a successful
+ * parse adopts the parser’s unchanged location functions.
  */
 export async function withPriorParserOptions<T>(
 	options: ParserOptions,

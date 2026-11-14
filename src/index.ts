@@ -1,5 +1,5 @@
 import type { Parser, ParserOptions, Plugin } from 'prettier';
-import type { ParserName } from './types/index.d.ts';
+import type { ParserName, PluginOptions } from './types/index.d.ts';
 import { parsers as babelParsers } from 'prettier/plugins/babel';
 import * as pluginEstree from 'prettier/plugins/estree';
 import {
@@ -8,12 +8,12 @@ import {
 	markParserAsExpandJSON,
 	withPriorParserOptions,
 } from './plugin-hooks/index.ts';
-import printExpandedJSON from './print-expanded-json/index.ts';
+import printJSON from './print-json/index.ts';
 
 const estreeOptions = (pluginEstree as Plugin).options!;
 const { printers: estreePrinters } = pluginEstree;
 
-const EXPANDED_ESTREE_FORMAT = 'estree-expand-json';
+const PLUGIN_ESTREE_FORMAT = 'estree-expand-json';
 
 function createParser(name: ParserName): Parser {
 	async function parse(
@@ -78,7 +78,7 @@ function createParser(name: ParserName): Parser {
 		astFormat:
 			name === 'json-stringify'
 				? babelParsers[name].astFormat
-				: EXPANDED_ESTREE_FORMAT,
+				: PLUGIN_ESTREE_FORMAT,
 		parse,
 		preprocess,
 	};
@@ -99,11 +99,37 @@ export const parsers: Plugin['parsers'] = {
 };
 
 export const printers: Plugin['printers'] = {
-	[EXPANDED_ESTREE_FORMAT]: {
+	[PLUGIN_ESTREE_FORMAT]: {
 		...estreePrinters.estree,
-		print: printExpandedJSON,
+		print: printJSON,
 	},
 	'estree-json': estreePrinters['estree-json'],
 };
 
-export const options: Plugin['options'] = { ...estreeOptions };
+export const options: Plugin['options'] = {
+	...estreeOptions,
+	jsonCollectionWrap: {
+		category: 'JSON',
+		description: 'Control wrapping for arrays and objects.',
+		type: 'choice',
+		default: 'expand',
+		choices: [
+			{
+				description:
+					'Use single-line format when collections fit within the configured line length.',
+				value: 'collapse',
+			},
+			{
+				description: 'Always use multi-line format.',
+				value: 'expand',
+			},
+			{
+				description:
+					'Follow Prettier’s wrapping behavior for the current parser.',
+				value: 'inherit',
+			},
+		],
+	},
+};
+
+export type { PluginOptions };

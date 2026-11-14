@@ -1,4 +1,5 @@
 import type { Doc, Printer } from 'prettier';
+import type { PluginOptions } from '../types/index.d.ts';
 import { doc } from 'prettier';
 import { printers as estreePrinters } from 'prettier/plugins/estree';
 
@@ -9,6 +10,9 @@ type AttachedComment = {
 
 type JSONContainerType = 'array' | 'object';
 
+/**
+ * Checks whether a node has comments that are neither leading nor trailing.
+ */
 function hasDanglingComments(node: unknown): boolean {
 	const { comments } = node as { comments?: AttachedComment[] };
 	return (
@@ -17,6 +21,9 @@ function hasDanglingComments(node: unknown): boolean {
 	);
 }
 
+/**
+ * Identifies arrays and objects that contain entries or dangling comments.
+ */
 function getNonEmptyJSONContainerType(
 	node: unknown
 ): JSONContainerType | undefined {
@@ -45,6 +52,9 @@ function getNonEmptyJSONContainerType(
 	}
 }
 
+/**
+ * Unwraps a fill document so the enclosing group controls its line breaks.
+ */
 function unpackFill(currentDoc: Doc): Doc {
 	return typeof currentDoc !== 'string' &&
 		!Array.isArray(currentDoc) &&
@@ -53,6 +63,9 @@ function unpackFill(currentDoc: Doc): Doc {
 		: currentDoc;
 }
 
+/**
+ * Forces a group document to break without changing nested groups.
+ */
 function forceDirectGroupToBreak(currentDoc: Doc): Doc {
 	return typeof currentDoc !== 'string' &&
 		!Array.isArray(currentDoc) &&
@@ -61,9 +74,12 @@ function forceDirectGroupToBreak(currentDoc: Doc): Doc {
 		: currentDoc;
 }
 
-function forceNativeContainerGroupToBreak(
+/**
+ * Updates Prettier’s container group while preserving trailing documents.
+ */
+function mapNativeContainerGroup(
 	printed: Doc,
-	containerType: JSONContainerType
+	callback: (group: doc.builders.Group) => doc.builders.Group
 ): Doc {
 	let structuralGroup: Doc | undefined = printed;
 
@@ -81,25 +97,53 @@ function forceNativeContainerGroupToBreak(
 		return printed;
 	}
 
-	const contents =
-		containerType === 'array'
-			? doc.utils.mapDoc(structuralGroup.contents, unpackFill)
-			: forceDirectGroupToBreak(structuralGroup.contents);
-
-	const brokenGroup = { ...structuralGroup, break: true, contents };
+	const mappedGroup = callback(structuralGroup);
 
 	return Array.isArray(printed)
-		? [brokenGroup, ...printed.slice(1)]
-		: brokenGroup;
+		? [mappedGroup, ...printed.slice(1)]
+		: mappedGroup;
 }
 
-const printExpandedJSON: Printer['print'] = (path, options, print, args) => {
-	const containerType = getNonEmptyJSONContainerType(path.node);
+/**
+ * Applies the selected wrapping behavior while preserving Prettier’s output
+ * for `inherit`.
+ */
+function applyJSONCollectionWrapping(
+	printed: Doc,
+	node: unknown,
+	collectionWrap: PluginOptions['jsonCollectionWrap']
+): Doc {
+	const containerType = getNonEmptyJSONContainerType(node);
+
+	if (!containerType || collectionWrap === 'inherit') {
+		return printed;
+	}
+
+	if (collectionWrap === 'collapse') {
+		return mapNativeContainerGroup(printed, (group) => ({
+			...group,
+			break: false,
+		}));
+	}
+
+	return mapNativeContainerGroup(printed, (group) => ({
+		...group,
+		break: true,
+		contents:
+			containerType === 'array'
+				? doc.utils.mapDoc(group.contents, unpackFill)
+				: forceDirectGroupToBreak(group.contents),
+	}));
+}
+
+/**
+ * Prints with Prettier before applying the selected wrapping behavior.
+ */
+const printJSON: Printer['print'] = (path, options, print, args) => {
+	const { jsonCollectionWrap } = options as PluginOptions;
 	const printed = estreePrinters.estree.print(path, options, print, args);
 
-	return containerType
-		? forceNativeContainerGroupToBreak(printed, containerType)
-		: printed;
+	return applyJSONCollectionWrapping(printed, path.node, jsonCollectionWrap);
 };
 
-export default printExpandedJSON;
+export default printJSON;

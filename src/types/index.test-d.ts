@@ -1,16 +1,21 @@
-import type { ParserOptions } from 'prettier';
+import type { ParserOptions, Options as PrettierOptions } from 'prettier';
 import type {
 	ParserDelegation,
 	ParserHookName,
 	ParserInitializer,
 	ParserName,
 	ParseWithCompatibility,
+	PluginOptions,
 	PluginWithParsers,
 	ResolvedPriorParser,
 } from './index.d.ts';
 import { expectTypeOf, test } from 'vite-plus/test';
 
 test('exposes valid types', () => {
+	expectTypeOf<PluginOptions>()
+		.toHaveProperty('jsonCollectionWrap')
+		.toEqualTypeOf<'collapse' | 'expand' | 'inherit' | undefined>();
+
 	expectTypeOf<ParserDelegation>().toEqualTypeOf<{
 		hook: ParserHookName;
 		parserName: ParserName;
@@ -40,4 +45,13 @@ test('exposes valid types', () => {
 	expectTypeOf<ResolvedPriorParser>().toHaveProperty('lifecycleState');
 	expectTypeOf<ResolvedPriorParser>().toHaveProperty('parser');
 	expectTypeOf<ResolvedPriorParser>().toHaveProperty('plugins');
+});
+
+test('extends Prettier’s `Options`', () => {
+	expectTypeOf<PrettierOptions>().toBeObject();
+	expectTypeOf<PrettierOptions>().toHaveProperty('useTabs');
+
+	expectTypeOf<PrettierOptions>()
+		.toHaveProperty('jsonCollectionWrap')
+		.toEqualTypeOf<'collapse' | 'expand' | 'inherit' | undefined>();
 });

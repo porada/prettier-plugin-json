@@ -3,11 +3,13 @@ import { format } from 'prettier';
 import { parsers as babelParsers } from 'prettier/plugins/babel';
 import { printers as estreePrinters } from 'prettier/plugins/estree';
 import { expect, test } from 'vite-plus/test';
-import printExpandedJSON from './index.ts';
+import { options as pluginOptions } from '../index.ts';
+import printJSON from './index.ts';
 
-const AST_FORMAT = 'estree-expanded-json-test';
+const AST_FORMAT = 'estree-json-test';
 
 const plugin: Plugin = {
+	options: pluginOptions,
 	parsers: {
 		json: {
 			...babelParsers.json,
@@ -21,7 +23,7 @@ const plugin: Plugin = {
 	printers: {
 		[AST_FORMAT]: {
 			...estreePrinters.estree,
-			print: printExpandedJSON,
+			print: printJSON,
 		},
 	},
 };
@@ -113,6 +115,25 @@ test('keeps truly empty arrays and objects compact', async () => {
 		"{
 		  "foo": [],
 		  "bar": {},
+		}
+		"
+	`);
+});
+
+test('collapses arrays and objects that fit on one line', async () => {
+	const output = await format(
+		'{\n"foo":[{"bar":1,"baz":2},{"qux":3,"quux":4}],\n"corge":{\n"grault":5\n}\n}',
+		{
+			jsonCollectionWrap: 'collapse',
+			parser: 'json',
+			plugins: [plugin],
+		}
+	);
+
+	expect(output).toMatchInlineSnapshot(`
+		"{
+		  "foo": [{ "bar": 1, "baz": 2 }, { "qux": 3, "quux": 4 }],
+		  "corge": { "grault": 5 }
 		}
 		"
 	`);
