@@ -142,7 +142,21 @@ Please note that both `expand` and `collapse` override the configured [`objectWr
 
 Yes. Prettier uses a separate parser called `json-stringify` to match the formatting of the tools that update these files. This plugin supports that parser, too.
 
-That said, `json-stringify` always expands non-empty arrays and objects, and `jsonCollectionWrap` can’t override that behavior.
+That said, `json-stringify` always expands arrays and objects, and `jsonCollectionWrap` can’t override that behavior. You can use the `json` parser to make Prettier apply the option anyway, but please note that external tools may reformat the entire file when updating it.
+
+```json
+{
+    "overrides": [
+        {
+            "files": "**/package.json",
+            "options": {
+                "parser": "json",
+                "jsonCollectionWrap": "collapse"
+            }
+        }
+    ]
+}
+```
 
 ## Related
 
