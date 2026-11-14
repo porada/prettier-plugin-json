@@ -110,30 +110,15 @@ exports[`JSON > formats output from other plugins’ parser hooks 1`] = `
 exports[`JSON > respects \`tabWidth\` 1`] = `
 "{
     // Comment 1
-    "foo": [
-        1,
-        2
-    ],
-    "bar": /* Comment 2 */ [
-        3
-    ],
+    "foo": [1, 2],
+    "bar": /* Comment 2 */ [3],
     // Comment 3
-    "baz": {
-        "qux": [
-            4
-        ]
-    },
+    "baz": { "qux": [4] },
     "quux": [], // Comment 4
     "corge": {},
     "grault": [
-        {
-            "garply": 5,
-            "waldo": 6
-        },
-        {
-            "fred": 7,
-            "plugh": 8
-        }
+        { "garply": 5, "waldo": 6 },
+        { "fred": 7, "plugh": 8 }
     ],
     "xyzzy": {
         "thud": 9
@@ -145,30 +130,15 @@ exports[`JSON > respects \`tabWidth\` 1`] = `
 exports[`JSON > respects \`useTabs\` 1`] = `
 "{
 	// Comment 1
-	"foo": [
-		1,
-		2
-	],
-	"bar": /* Comment 2 */ [
-		3
-	],
+	"foo": [1, 2],
+	"bar": /* Comment 2 */ [3],
 	// Comment 3
-	"baz": {
-		"qux": [
-			4
-		]
-	},
+	"baz": { "qux": [4] },
 	"quux": [], // Comment 4
 	"corge": {},
 	"grault": [
-		{
-			"garply": 5,
-			"waldo": 6
-		},
-		{
-			"fred": 7,
-			"plugh": 8
-		}
+		{ "garply": 5, "waldo": 6 },
+		{ "fred": 7, "plugh": 8 }
 	],
 	"xyzzy": {
 		"thud": 9
@@ -567,30 +537,15 @@ exports[`JSONC > formats output from other plugins’ parser hooks 1`] = `
 exports[`JSONC > respects \`tabWidth\` 1`] = `
 "{
     // Comment 1
-    "foo": [
-        1,
-        2,
-    ],
-    "bar": /* Comment 2 */ [
-        3,
-    ],
+    "foo": [1, 2],
+    "bar": /* Comment 2 */ [3],
     // Comment 3
-    "baz": {
-        "qux": [
-            4,
-        ],
-    },
+    "baz": { "qux": [4] },
     "quux": [], // Comment 4
     "corge": {},
     "grault": [
-        {
-            "garply": 5,
-            "waldo": 6,
-        },
-        {
-            "fred": 7,
-            "plugh": 8,
-        },
+        { "garply": 5, "waldo": 6 },
+        { "fred": 7, "plugh": 8 },
     ],
     "xyzzy": {
         "thud": 9,
@@ -603,30 +558,15 @@ exports[`JSONC > respects \`trailingComma\` 1`] = `
 {
   "all": "{
   // Comment 1
-  "foo": [
-    1,
-    2,
-  ],
-  "bar": /* Comment 2 */ [
-    3,
-  ],
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
   // Comment 3
-  "baz": {
-    "qux": [
-      4,
-    ],
-  },
+  "baz": { "qux": [4] },
   "quux": [], // Comment 4
   "corge": {},
   "grault": [
-    {
-      "garply": 5,
-      "waldo": 6,
-    },
-    {
-      "fred": 7,
-      "plugh": 8,
-    },
+    { "garply": 5, "waldo": 6 },
+    { "fred": 7, "plugh": 8 },
   ],
   "xyzzy": {
     "thud": 9,
@@ -635,30 +575,15 @@ exports[`JSONC > respects \`trailingComma\` 1`] = `
 ",
   "none": "{
   // Comment 1
-  "foo": [
-    1,
-    2
-  ],
-  "bar": /* Comment 2 */ [
-    3
-  ],
+  "foo": [1, 2],
+  "bar": /* Comment 2 */ [3],
   // Comment 3
-  "baz": {
-    "qux": [
-      4
-    ]
-  },
+  "baz": { "qux": [4] },
   "quux": [], // Comment 4
   "corge": {},
   "grault": [
-    {
-      "garply": 5,
-      "waldo": 6
-    },
-    {
-      "fred": 7,
-      "plugh": 8
-    }
+    { "garply": 5, "waldo": 6 },
+    { "fred": 7, "plugh": 8 }
   ],
   "xyzzy": {
     "thud": 9
@@ -671,30 +596,15 @@ exports[`JSONC > respects \`trailingComma\` 1`] = `
 exports[`JSONC > respects \`useTabs\` 1`] = `
 "{
 	// Comment 1
-	"foo": [
-		1,
-		2,
-	],
-	"bar": /* Comment 2 */ [
-		3,
-	],
+	"foo": [1, 2],
+	"bar": /* Comment 2 */ [3],
 	// Comment 3
-	"baz": {
-		"qux": [
-			4,
-		],
-	},
+	"baz": { "qux": [4] },
 	"quux": [], // Comment 4
 	"corge": {},
 	"grault": [
-		{
-			"garply": 5,
-			"waldo": 6,
-		},
-		{
-			"fred": 7,
-			"plugh": 8,
-		},
+		{ "garply": 5, "waldo": 6 },
+		{ "fred": 7, "plugh": 8 },
 	],
 	"xyzzy": {
 		"thud": 9,

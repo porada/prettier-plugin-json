@@ -6,7 +6,7 @@ export interface PluginOptions {
 	 * on a single line when they fit within the configured line length.
 	 * `expand` always uses the multi-line format for non-empty collections.
 	 * `inherit` follows Prettier’s wrapping behavior for the current parser.
-	 * @default 'expand'
+	 * @default 'inherit'
 	 */
 	jsonCollectionWrap?: 'collapse' | 'expand' | 'inherit' | undefined;
 }

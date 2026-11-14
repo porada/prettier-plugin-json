@@ -112,7 +112,7 @@ export const options: Plugin['options'] = {
 		category: 'JSON',
 		description: 'Control wrapping for arrays and objects.',
 		type: 'choice',
-		default: 'expand',
+		default: 'inherit',
 		choices: [
 			{
 				description:

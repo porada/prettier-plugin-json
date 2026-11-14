@@ -59,6 +59,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 
 	test('expands non-empty arrays and objects', async () => {
 		const options = {
+			jsonCollectionWrap: 'expand' as const,
 			objectWrap: 'collapse' as const,
 			parser,
 			plugins: [pluginJSON],
@@ -73,6 +74,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 
 	test('expands input embedded in Markdown', async () => {
 		const options = {
+			jsonCollectionWrap: 'expand' as const,
 			parser: 'markdown',
 			plugins: [pluginJSON],
 		};
@@ -96,9 +98,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			const output = await format('{"foo":1.230}', options);
 
 			expect(output).toMatchInlineSnapshot(`
-				"{
-				  "foo": 1.23
-				}
+				"{ "foo": 1.23 }
 				"
 			`);
 			await expect(format(output, options)).resolves.toBe(output);
@@ -179,11 +179,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			expect(output).toMatchInlineSnapshot(`
 				"/** @format */
 
-				{
-				  "foo": [
-				    1,
-				  ],
-				}
+				{ "foo": [1] }
 				"
 			`);
 			await expect(format(output, options)).resolves.toBe(output);
@@ -196,6 +192,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 				"bar":[3]
 			}`;
 			const options = {
+				jsonCollectionWrap: 'expand' as const,
 				parser,
 				plugins: [pluginJSON],
 			};
@@ -263,11 +260,7 @@ ${selectedInput},
 
 			expect(output).toMatchInlineSnapshot(`
 				"/** @format */
-				{
-				  "foo": [
-				    1,
-				  ],
-				}
+				{ "foo": [1] }
 				"
 			`);
 			await expect(format(output, options)).resolves.toBe(output);
@@ -376,6 +369,9 @@ ${selectedInput},
 			outputs.inherit
 		);
 		await expect(format(input, { parser })).resolves.toBe(outputs.inherit);
+		await expect(
+			format(input, { parser, plugins: [pluginJSON] })
+		).resolves.toBe(outputs.inherit);
 	});
 
 	test('formats output from other plugins’ parser hooks', async () => {
@@ -394,6 +390,7 @@ ${selectedInput},
 		const emptyPlugin: Plugin = {};
 
 		const options = {
+			jsonCollectionWrap: 'expand' as const,
 			parser,
 			plugins: [
 				parser === 'json' ? pluginSortJSON : testPlugin,

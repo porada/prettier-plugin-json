@@ -32,6 +32,7 @@ test('expands non-empty arrays and objects', async () => {
 	const output = await format(
 		'{"foo":[1,2],"bar":/* Comment */{"baz":[3]},"qux":[],"quux":{}}',
 		{
+			jsonCollectionWrap: 'expand',
 			parser: 'json',
 			plugins: [plugin],
 		}
@@ -57,6 +58,7 @@ test('expands non-empty arrays and objects', async () => {
 
 test('preserves dangling comments in arrays', async () => {
 	const output = await format('{"foo":[/* Comment */]}', {
+		jsonCollectionWrap: 'expand',
 		parser: 'jsonc',
 		plugins: [plugin],
 	});
@@ -73,6 +75,7 @@ test('preserves dangling comments in arrays', async () => {
 
 test('preserves dangling comments in nested containers', async () => {
 	const output = await format('{"foo":[{/* Comment */}]}', {
+		jsonCollectionWrap: 'expand',
 		parser: 'jsonc',
 		plugins: [plugin],
 	});
@@ -91,6 +94,7 @@ test('preserves dangling comments in nested containers', async () => {
 
 test('preserves dangling comments in objects', async () => {
 	const output = await format('{"foo":{/* Comment */}}', {
+		jsonCollectionWrap: 'expand',
 		parser: 'jsonc',
 		plugins: [plugin],
 	});
@@ -107,6 +111,7 @@ test('preserves dangling comments in objects', async () => {
 
 test('keeps truly empty arrays and objects compact', async () => {
 	const output = await format('{"foo":[],"bar":{}}', {
+		jsonCollectionWrap: 'expand',
 		parser: 'jsonc',
 		plugins: [plugin],
 	});

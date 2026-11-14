@@ -140,7 +140,7 @@ function applyJSONCollectionWrapping(
  * Prints with Prettier before applying the selected wrapping behavior.
  */
 const printJSON: Printer['print'] = (path, options, print, args) => {
-	const { jsonCollectionWrap } = options as PluginOptions;
+	const { jsonCollectionWrap = 'inherit' } = options as PluginOptions;
 	const printed = estreePrinters.estree.print(path, options, print, args);
 
 	return applyJSONCollectionWrapping(printed, path.node, jsonCollectionWrap);

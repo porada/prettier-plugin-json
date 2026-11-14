@@ -102,7 +102,7 @@ interface PluginOptions {
      * on a single line when they fit within the configured line length.
      * `expand` always uses the multi-line format for non-empty collections.
      * `inherit` follows Prettier’s wrapping behavior for the current parser.
-     * @default 'expand'
+     * @default 'inherit'
      */
     jsonCollectionWrap?: 'collapse' | 'expand' | 'inherit' | undefined;
 }
@@ -112,7 +112,7 @@ interface PluginOptions {
 
 ### How do `expand` and `collapse` affect JSON wrapping?
 
-With `expand`, the default value, each array item and object property starts on a separate line. Empty arrays and objects stay compact.
+With `expand`, each array item and object property starts on a separate line. Empty arrays and objects stay compact.
 
 ```json
 {
