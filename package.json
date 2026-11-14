@@ -1,7 +1,7 @@
 {
-	"name": "prettier-plugin-expand-json",
+	"name": "prettier-plugin-json",
 	"version": "1.2.1",
-	"description": "Expand JSON arrays and objects into multi-line format with Prettier",
+	"description": "Additional JSON and JSONC formatting options for Prettier",
 	"license": "MIT",
 	"author": {
 		"name": "Dom Porada",
@@ -10,14 +10,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/porada/prettier-plugin-expand-json.git"
+		"url": "git+https://github.com/porada/prettier-plugin-json.git"
 	},
 	"keywords": [
 		"formatting",
 		"json",
 		"jsonc",
 		"prettier",
-		"prettier-plugin"
+		"prettier-plugin",
+		"prettier-plugin-expand-json"
 	],
 	"files": [
 		"dist/**"

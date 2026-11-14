@@ -8,15 +8,9 @@ import type {
 	ResolvedPriorParser,
 } from '../types/index.d.ts';
 
-const EXPAND_JSON_PARSER_DELEGATION = Symbol.for(
-	'prettier-plugin-expand-json.parser-delegation'
-);
-const EXPAND_JSON_PARSER_MARKER = Symbol.for(
-	'prettier-plugin-expand-json.parser'
-);
-const EXPAND_JSON_PARSER_ORIGIN = Symbol.for(
-	'prettier-plugin-expand-json.parser-origin'
-);
+const PARSER_DELEGATION = Symbol.for('prettier-plugin-json.parser-delegation');
+const PARSER_MARKER = Symbol.for('prettier-plugin-json.parser');
+const PARSER_ORIGIN = Symbol.for('prettier-plugin-json.parser-origin');
 
 type ParserContext = {
 	delegation?: ParserDelegation;
@@ -25,7 +19,7 @@ type ParserContext = {
 };
 
 type ParserOptionsWithContext = ParserOptions & {
-	[EXPAND_JSON_PARSER_DELEGATION]?: ParserContext;
+	[PARSER_DELEGATION]?: ParserContext;
 };
 
 type ParserOrigin = Pick<Parser, 'parse' | 'preprocess'>;
@@ -46,9 +40,9 @@ type ResolverState = {
 /**
  * Marks a parser so resolver chains can recognize this plugin’s wrappers.
  */
-export function markParserAsExpandJSON(parser: Parser): Parser {
-	Object.defineProperty(parser, EXPAND_JSON_PARSER_MARKER, { value: true });
-	Object.defineProperty(parser, EXPAND_JSON_PARSER_ORIGIN, {
+export function markParserAsOwn(parser: Parser): Parser {
+	Object.defineProperty(parser, PARSER_MARKER, { value: true });
+	Object.defineProperty(parser, PARSER_ORIGIN, {
 		enumerable: true,
 		value: {
 			parse: parser.parse,
@@ -62,8 +56,8 @@ export function markParserAsExpandJSON(parser: Parser): Parser {
  * Checks whether a parser carries this plugin’s marker directly
  * or through inheritance.
  */
-function isExpandJSONParser(parser: Parser): boolean {
-	return Reflect.get(parser, EXPAND_JSON_PARSER_MARKER) === true;
+function isOwnParser(parser: Parser): boolean {
+	return Reflect.get(parser, PARSER_MARKER) === true;
 }
 
 /**
@@ -94,7 +88,7 @@ export function createPriorParserResolver(
 
 	return async (options, hook) => {
 		const context = (options as ParserOptionsWithContext)[
-			EXPAND_JSON_PARSER_DELEGATION
+			PARSER_DELEGATION
 		];
 		const delegation = context?.delegation;
 
@@ -196,7 +190,7 @@ async function findPriorParser(
 		const isSelectedParser = isEntry;
 		isEntry = false;
 
-		if (isExpandJSONParser(parser)) {
+		if (isOwnParser(parser)) {
 			omittedPluginIndexes.add(index);
 			continue;
 		}
@@ -204,7 +198,7 @@ async function findPriorParser(
 		assertCompatibleParser(name, parser, expectedAstFormat, currentParser);
 
 		const parserHook = parser[hook];
-		const origin = Reflect.get(parser, EXPAND_JSON_PARSER_ORIGIN) as
+		const origin = Reflect.get(parser, PARSER_ORIGIN) as
 			ParserOrigin | undefined;
 
 		// Treat the selected copied wrapper as entered, even for lazy parsers
@@ -318,7 +312,7 @@ function assertCompatibleParser(
 			.join(' or ');
 
 		throw new TypeError(
-			`[prettier-plugin-expand-json] Unsupported AST format for the \`${name}\` parser. Expected ${expectedAstFormats}, received \`${parser.astFormat}\``
+			`[prettier-plugin-json] Unsupported AST format for the \`${name}\` parser. Expected ${expectedAstFormats}, received \`${parser.astFormat}\``
 		);
 	}
 }
@@ -345,7 +339,7 @@ export async function withPriorParserOptions<T>(
 	callback: (options: ParserOptions) => T
 ): Promise<Awaited<T>> {
 	const parserOptions = options as ParserOptionsWithContext;
-	const previousContext = parserOptions[EXPAND_JSON_PARSER_DELEGATION];
+	const previousContext = parserOptions[PARSER_DELEGATION];
 	previousContext?.syncOptions();
 
 	const { astFormat, locEnd, locStart, plugins } = options;
@@ -387,7 +381,7 @@ export async function withPriorParserOptions<T>(
 			};
 		},
 	};
-	parserOptions[EXPAND_JSON_PARSER_DELEGATION] = context;
+	parserOptions[PARSER_DELEGATION] = context;
 	let parsedLocations: Pick<ParserOptions, 'locEnd' | 'locStart'> | undefined;
 
 	try {
@@ -420,7 +414,7 @@ export async function withPriorParserOptions<T>(
 				locStart: options.locStart,
 				plugins: options.plugins,
 			};
-			parserOptions[EXPAND_JSON_PARSER_DELEGATION] = previousContext;
+			parserOptions[PARSER_DELEGATION] = previousContext;
 		} else {
 			if (entryOptions) {
 				entryOptions.locEnd = options.locEnd;
@@ -428,10 +422,7 @@ export async function withPriorParserOptions<T>(
 				entryOptions.plugins = options.plugins;
 			}
 
-			Reflect.deleteProperty(
-				parserOptions,
-				EXPAND_JSON_PARSER_DELEGATION
-			);
+			Reflect.deleteProperty(parserOptions, PARSER_DELEGATION);
 		}
 	}
 }

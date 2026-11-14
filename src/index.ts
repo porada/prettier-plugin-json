@@ -5,7 +5,7 @@ import * as pluginEstree from 'prettier/plugins/estree';
 import {
 	callParserWithCompatibility,
 	createPriorParserResolver,
-	markParserAsExpandJSON,
+	markParserAsOwn,
 	withPriorParserOptions,
 } from './plugin-hooks/index.ts';
 import printJSON from './print-json/index.ts';
@@ -13,7 +13,7 @@ import printJSON from './print-json/index.ts';
 const estreeOptions = (pluginEstree as Plugin).options!;
 const { printers: estreePrinters } = pluginEstree;
 
-const PLUGIN_ESTREE_FORMAT = 'estree-expand-json';
+const PLUGIN_ESTREE_FORMAT = 'prettier-plugin-json.estree';
 
 function createParser(name: ParserName): Parser {
 	async function parse(
@@ -89,7 +89,7 @@ function createParser(name: ParserName): Parser {
 		parser
 	);
 
-	return markParserAsExpandJSON(parser);
+	return markParserAsOwn(parser);
 }
 
 export const parsers: Plugin['parsers'] = {

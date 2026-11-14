@@ -6,16 +6,16 @@ import * as pluginBabel from 'prettier/plugins/babel';
 import * as pluginEstree from 'prettier/plugins/estree';
 import { format as standaloneFormat } from 'prettier/standalone';
 import { describe, expect, expectTypeOf, test } from 'vite-plus/test';
-import * as pluginExpandJSON from './index.ts';
+import * as pluginJSON from './index.ts';
 
 test('exposes correct public API', () => {
-	expectTypeOf(pluginExpandJSON).toExtend<Plugin>();
+	expectTypeOf(pluginJSON).toExtend<Plugin>();
 
-	expect(pluginExpandJSON).toHaveProperty('options');
-	expect(pluginExpandJSON).toHaveProperty('parsers');
-	expect(pluginExpandJSON).toHaveProperty('printers');
-	expect(pluginExpandJSON.printers).toHaveProperty('estree-expand-json');
-	expect(pluginExpandJSON.printers).toHaveProperty('estree-json');
+	expect(pluginJSON).toHaveProperty('options');
+	expect(pluginJSON).toHaveProperty('parsers');
+	expect(pluginJSON).toHaveProperty('printers');
+	expect(pluginJSON.printers).toHaveProperty('estree-json');
+	expect(pluginJSON.printers).toHaveProperty('prettier-plugin-json.estree');
 
 	expectTypeOf<PluginOptions>().toBeObject();
 });
@@ -54,14 +54,14 @@ const TESTS = [
 
 describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 	test('is supported', () => {
-		expect(pluginExpandJSON.parsers).toHaveProperty(parser);
+		expect(pluginJSON.parsers).toHaveProperty(parser);
 	});
 
 	test('expands non-empty arrays and objects', async () => {
 		const options = {
 			objectWrap: 'collapse' as const,
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 			printWidth: Number.POSITIVE_INFINITY,
 		};
 
@@ -74,7 +74,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 	test('expands input embedded in Markdown', async () => {
 		const options = {
 			parser: 'markdown',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		};
 
 		const output = await format(
@@ -90,7 +90,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 		test('normalizes numbers', async () => {
 			const options = {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			};
 
 			const output = await format('{"foo":1.230}', options);
@@ -111,7 +111,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			const options = {
 				checkIgnorePragma: true,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			};
 
 			const output = await format(input, options);
@@ -128,7 +128,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			await formatWithCursor(input, {
 				cursorOffset,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			});
 
 		expect(formatted).not.toBe(input);
@@ -142,7 +142,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 		const output = await format(embeddedInput, {
 			embeddedLanguageFormatting: 'off',
 			parser: 'markdown',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		expect(output).toBe(embeddedInput);
@@ -152,7 +152,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 		const options = {
 			endOfLine: 'crlf' as const,
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		};
 		const expectedOutput = await format(input, {
 			...options,
@@ -171,7 +171,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			const options = {
 				insertPragma: true,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			};
 
 			const output = await format(input, options);
@@ -197,7 +197,7 @@ describe.each(TESTS)('%s', (_, parser, input, markdownLanguage) => {
 			}`;
 			const options = {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			};
 
 			const output = await format(input, options);
@@ -232,14 +232,14 @@ ${selectedInput},
 			const unchangedSuffix = input.slice(rangeEnd);
 			const options = {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 				rangeEnd,
 				rangeStart,
 			};
 
 			const selectedOutput = await format(selectedInput, {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			});
 			const output = await format(input, options);
 
@@ -255,7 +255,7 @@ ${selectedInput},
 			const unformattedInput = '{"foo":[1]}\n';
 			const options = {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 				requirePragma: true,
 			};
 
@@ -280,7 +280,7 @@ ${selectedInput},
 	test('respects `tabWidth`', async () => {
 		const options = {
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 			tabWidth: 4,
 		};
 
@@ -295,12 +295,12 @@ ${selectedInput},
 			const options = {
 				all: {
 					parser,
-					plugins: [pluginExpandJSON],
+					plugins: [pluginJSON],
 					trailingComma: 'all' as const,
 				},
 				none: {
 					parser,
-					plugins: [pluginExpandJSON],
+					plugins: [pluginJSON],
 					trailingComma: 'none' as const,
 				},
 			};
@@ -330,7 +330,7 @@ ${selectedInput},
 	test('respects `useTabs`', async () => {
 		const options = {
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 			useTabs: true,
 		};
 
@@ -345,17 +345,17 @@ ${selectedInput},
 			collapse: {
 				jsonCollectionWrap: 'collapse' as const,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			},
 			expand: {
 				jsonCollectionWrap: 'expand' as const,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			},
 			inherit: {
 				jsonCollectionWrap: 'inherit' as const,
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			},
 		};
 
@@ -398,7 +398,7 @@ ${selectedInput},
 			plugins: [
 				parser === 'json' ? pluginSortJSON : testPlugin,
 				emptyPlugin,
-				pluginExpandJSON,
+				pluginJSON,
 			],
 		};
 
@@ -411,7 +411,7 @@ ${selectedInput},
 		const input = '\n';
 		const options = {
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		};
 
 		const output = await format(input, options);
@@ -426,7 +426,7 @@ ${selectedInput},
 
 			const output = await format(input, {
 				parser,
-				plugins: [pluginExpandJSON],
+				plugins: [pluginJSON],
 			});
 
 			expect(output).toBe(input);
@@ -436,7 +436,7 @@ ${selectedInput},
 	test('formats in standalone mode with bundled parser and printer fallbacks', async () => {
 		const options = {
 			parser,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		};
 
 		const expectedOutput = await format(input, options);
@@ -448,7 +448,7 @@ ${selectedInput},
 	test('formats in standalone mode with native plugins', async () => {
 		const options = {
 			parser,
-			plugins: [pluginBabel, pluginEstree, pluginExpandJSON],
+			plugins: [pluginBabel, pluginEstree, pluginJSON],
 		};
 
 		const expectedOutput = await format(input, options);

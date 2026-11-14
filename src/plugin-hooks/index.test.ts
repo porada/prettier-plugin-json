@@ -4,13 +4,13 @@ import { format, formatWithCursor } from 'prettier';
 import { parsers as babelParsers } from 'prettier/plugins/babel';
 import { printers as estreePrinters } from 'prettier/plugins/estree';
 import { expect, test, vi } from 'vite-plus/test';
-import * as pluginExpandJSON from '../index.ts';
+import * as pluginJSON from '../index.ts';
 import { createPriorParserResolver, withPriorParserOptions } from './index.ts';
 
 const TEST_JSON = '{"foo":[1]}';
 
 function getDirectParser(
-	plugin: typeof pluginExpandJSON,
+	plugin: typeof pluginJSON,
 	parserName: 'json' | 'json-stringify' | 'jsonc'
 ): Parser {
 	const parser = plugin.parsers?.[parserName];
@@ -25,7 +25,7 @@ function getDirectParser(
 function createJSONWrapperPlugin(parser: Parser): Plugin {
 	return {
 		parsers: { json: parser },
-		printers: pluginExpandJSON.printers,
+		printers: pluginJSON.printers,
 	};
 }
 
@@ -37,10 +37,8 @@ function createLocationFunctions(): Pick<Parser, 'locEnd' | 'locStart'> {
 }
 
 function createRejectionFixture() {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
-	const delegationKey = Symbol.for(
-		'prettier-plugin-expand-json.parser-delegation'
-	);
+	const parser = getDirectParser(pluginJSON, 'json');
+	const delegationKey = Symbol.for('prettier-plugin-json.parser-delegation');
 
 	const error = new Error();
 	let reject = true;
@@ -93,7 +91,7 @@ function createRejectionFixture() {
 		locEnd: parser.locEnd,
 		locStart: parser.locStart,
 		parser: 'json',
-		plugins: [priorPlugin, wrapperPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, wrapperPlugin, pluginJSON],
 	} as unknown as ParserOptions;
 
 	const outerContext = {
@@ -132,7 +130,7 @@ test('returns `undefined` without a prior parser', async () => {
 	const resolvePriorParser = createPriorParserResolver(
 		'json',
 		babelParsers.json.astFormat,
-		getDirectParser(pluginExpandJSON, 'json')
+		getDirectParser(pluginJSON, 'json')
 	);
 
 	const options = {
@@ -149,7 +147,7 @@ test('returns `undefined` without a prior parser', async () => {
 });
 
 test('doesn’t resolve canonical parsers for aliased exports', async () => {
-	const currentParser = getDirectParser(pluginExpandJSON, 'jsonc');
+	const currentParser = getDirectParser(pluginJSON, 'jsonc');
 	const initializeCanonicalParser = vi.fn(async (): Promise<Parser> => {
 		await Promise.resolve();
 		return babelParsers.jsonc;
@@ -180,7 +178,7 @@ test('doesn’t resolve canonical parsers for aliased exports', async () => {
 });
 
 test('preserves the selected parser name between hooks', async () => {
-	const currentParser = getDirectParser(pluginExpandJSON, 'json');
+	const currentParser = getDirectParser(pluginJSON, 'json');
 	const priorParser: Parser = {
 		...babelParsers.json,
 		preprocess: (text) => text,
@@ -196,7 +194,7 @@ test('preserves the selected parser name between hooks', async () => {
 
 	const options = {
 		parser: 'json',
-		plugins: [priorPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, pluginJSON],
 	} as unknown as ParserOptions;
 
 	let result = await resolvePriorParser(options, 'preprocess');
@@ -211,7 +209,7 @@ test('preserves the selected parser name between hooks', async () => {
 });
 
 test('sets and restores prior parser location functions', async () => {
-	const currentParser = getDirectParser(pluginExpandJSON, 'json');
+	const currentParser = getDirectParser(pluginJSON, 'json');
 	const { locEnd, locStart } = createLocationFunctions();
 
 	const priorParser: Parser = {
@@ -226,7 +224,7 @@ test('sets and restores prior parser location functions', async () => {
 		astFormat: currentParser.astFormat,
 		locEnd: currentParser.locEnd,
 		locStart: currentParser.locStart,
-		plugins: [pluginExpandJSON],
+		plugins: [pluginJSON],
 	} as unknown as ParserOptions;
 
 	const originalPlugins = options.plugins;
@@ -252,13 +250,13 @@ test('sets and restores prior parser location functions', async () => {
 test.each(['parse', 'preprocess'] as const)(
 	'retains prior parser locations only after `%s` succeeds',
 	async (hook) => {
-		const currentParser = getDirectParser(pluginExpandJSON, 'json');
+		const currentParser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		const priorParser: Parser = { ...babelParsers.json, locEnd, locStart };
 
 		const lifecycleState: ResolvedPriorParser['lifecycleState'] = {};
-		const plugins: ParserOptions['plugins'] = [pluginExpandJSON];
+		const plugins: ParserOptions['plugins'] = [pluginJSON];
 
 		const options = {
 			astFormat: currentParser.astFormat,
@@ -308,13 +306,13 @@ test.each(['parse', 'preprocess'] as const)(
 test.each(['parse', 'preprocess'] as const)(
 	'restores prior parser options when `%s` rejects',
 	async (hook) => {
-		const currentParser = getDirectParser(pluginExpandJSON, 'json');
+		const currentParser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		const priorParser: Parser = { ...babelParsers.json, locEnd, locStart };
 
 		const lifecycleState: ResolvedPriorParser['lifecycleState'] = {};
-		const plugins: ParserOptions['plugins'] = [pluginExpandJSON];
+		const plugins: ParserOptions['plugins'] = [pluginJSON];
 
 		const options = {
 			astFormat: currentParser.astFormat,
@@ -362,7 +360,7 @@ test.each(['parse', 'preprocess'] as const)(
 test.each(['parse', 'preprocess'] as const)(
 	'preserves hook-written lifecycle changes when `%s` rejects',
 	async (hook) => {
-		const currentParser = getDirectParser(pluginExpandJSON, 'json');
+		const currentParser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		const replacementPlugins: ParserOptions['plugins'] = [];
@@ -373,7 +371,7 @@ test.each(['parse', 'preprocess'] as const)(
 			astFormat: currentParser.astFormat,
 			locEnd: currentParser.locEnd,
 			locStart: currentParser.locStart,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		} as unknown as ParserOptions;
 
 		const error = new Error();
@@ -413,7 +411,7 @@ test.each(['parse', 'preprocess'] as const)(
 );
 
 test('distinguishes adopted entry locations from explicit resets', async () => {
-	const currentParser = getDirectParser(pluginExpandJSON, 'json');
+	const currentParser = getDirectParser(pluginJSON, 'json');
 	const { locEnd, locStart } = createLocationFunctions();
 
 	const priorPlugin: Plugin = {
@@ -437,7 +435,7 @@ test('distinguishes adopted entry locations from explicit resets', async () => {
 		locEnd: currentParser.locEnd,
 		locStart: currentParser.locStart,
 		parser: 'json',
-		plugins: [priorPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, pluginJSON],
 	} as unknown as ParserOptions;
 
 	const resolvedPriorParser = await resolvePriorParser(options, 'parse');
@@ -478,7 +476,7 @@ test('distinguishes adopted entry locations from explicit resets', async () => {
 test.each(['parse', 'preprocess'] as const)(
 	'tracks entry option resets after `%s` rejects',
 	async (hook) => {
-		const currentParser = getDirectParser(pluginExpandJSON, 'json');
+		const currentParser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		const priorPlugin: Plugin = {
@@ -501,7 +499,7 @@ test.each(['parse', 'preprocess'] as const)(
 			locEnd: currentParser.locEnd,
 			locStart: currentParser.locStart,
 			parser: 'json',
-			plugins: [priorPlugin, pluginExpandJSON],
+			plugins: [priorPlugin, pluginJSON],
 		} as unknown as ParserOptions;
 
 		const originalPlugins = options.plugins;
@@ -607,7 +605,7 @@ test('respects `cursorOffset` with prior parser locations', async () => {
 		await formatWithCursor(TEST_JSON, {
 			cursorOffset,
 			parser: 'json',
-			plugins: [priorPlugin, pluginExpandJSON],
+			plugins: [priorPlugin, pluginJSON],
 		});
 
 	expect(formatted).not.toBe(TEST_JSON);
@@ -616,14 +614,14 @@ test('respects `cursorOffset` with prior parser locations', async () => {
 });
 
 test('preserves plugin lists reassigned by prior parsers', async () => {
-	const currentParser = getDirectParser(pluginExpandJSON, 'json');
+	const currentParser = getDirectParser(pluginJSON, 'json');
 	const reassignedPlugins: ParserOptions['plugins'] = [];
 
 	const options = {
 		astFormat: currentParser.astFormat,
 		locEnd: currentParser.locEnd,
 		locStart: currentParser.locStart,
-		plugins: [pluginExpandJSON],
+		plugins: [pluginJSON],
 	} as unknown as ParserOptions;
 
 	await withPriorParserOptions(
@@ -690,10 +688,10 @@ test('rejects prior parsers with incompatible AST formats', async () => {
 	await expect(
 		format(TEST_JSON, {
 			parser: 'json',
-			plugins: [customPlugin, pluginExpandJSON],
+			plugins: [customPlugin, pluginJSON],
 		})
 	).rejects.toThrowErrorMatchingInlineSnapshot(
-		`[TypeError: [prettier-plugin-expand-json] Unsupported AST format for the \`json\` parser. Expected \`estree\` or \`estree-expand-json\`, received \`custom-json\`]`
+		`[TypeError: [prettier-plugin-json] Unsupported AST format for the \`json\` parser. Expected \`estree\` or \`prettier-plugin-json.estree\`, received \`custom-json\`]`
 	);
 });
 
@@ -721,7 +719,7 @@ test('passes compatible options to prior parsers', async () => {
 
 	await format(TEST_JSON, {
 		parser: 'jsonc',
-		plugins: [observingPlugin, pluginExpandJSON],
+		plugins: [observingPlugin, pluginJSON],
 		printWidth: 80,
 	});
 
@@ -733,7 +731,7 @@ test('passes compatible options to prior parsers', async () => {
 test('shares options between prior `preprocess` and `parse` hooks', async () => {
 	const { locEnd, locStart } = createLocationFunctions();
 
-	let observedExpandJSONState: unknown;
+	let observedState: unknown;
 	let observedLocEnd: Parser['locEnd'] | undefined;
 	let observedLocStart: Parser['locStart'] | undefined;
 
@@ -742,14 +740,14 @@ test('shares options between prior `preprocess` and `parse` hooks', async () => 
 			json: {
 				...babelParsers.json,
 				parse: (text, options) => {
-					observedExpandJSONState = options.expandJSONState;
+					observedState = options.jsonState;
 					observedLocEnd = options.locEnd;
 					observedLocStart = options.locStart;
 					return babelParsers.json.parse(text, options);
 				},
 				preprocess: async (text, options) => {
 					await Promise.resolve();
-					options.expandJSONState = true;
+					options.jsonState = true;
 					options.locEnd = locEnd;
 					options.locStart = locStart;
 					return text;
@@ -760,10 +758,10 @@ test('shares options between prior `preprocess` and `parse` hooks', async () => 
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [statefulPlugin, pluginExpandJSON],
+		plugins: [statefulPlugin, pluginJSON],
 	});
 
-	expect(observedExpandJSONState).toBe(true);
+	expect(observedState).toBe(true);
 	expect(observedLocEnd).toBe(locEnd);
 	expect(observedLocStart).toBe(locStart);
 });
@@ -771,7 +769,7 @@ test('shares options between prior `preprocess` and `parse` hooks', async () => 
 test('ignores plugins with an `undefined` parser map', async () => {
 	const expectedOutput = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [pluginExpandJSON],
+		plugins: [pluginJSON],
 	});
 
 	const output = await format(TEST_JSON, {
@@ -779,7 +777,7 @@ test('ignores plugins with an `undefined` parser map', async () => {
 		plugins: [
 			/* prettier-ignore */
 			{ parsers: undefined },
-			pluginExpandJSON,
+			pluginJSON,
 		],
 	});
 
@@ -799,7 +797,7 @@ test.each([
 ] as const)(
 	'runs lazy copied hooks once when placed %s with the `%s` parser',
 	async (placement, parserName) => {
-		const parser = getDirectParser(pluginExpandJSON, parserName);
+		const parser = getDirectParser(pluginJSON, parserName);
 		const parse = vi.fn(function (
 			this: Parser,
 			text: string,
@@ -826,18 +824,18 @@ test.each([
 					return { ...parser, parse, preprocess };
 				},
 			},
-			printers: pluginExpandJSON.printers,
+			printers: pluginJSON.printers,
 		} as unknown as Plugin;
 
 		const expectedOutput = await format('{"foo":[2,1]}', {
 			parser: parserName,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const plugins = {
-			'after this plugin': [pluginExpandJSON, wrapperPlugin],
+			'after this plugin': [pluginJSON, wrapperPlugin],
 			'alone': [wrapperPlugin],
-			'before this plugin': [wrapperPlugin, pluginExpandJSON],
+			'before this plugin': [wrapperPlugin, pluginJSON],
 		}[placement];
 
 		const output = await format(TEST_JSON, {
@@ -894,7 +892,7 @@ test.each([
 ] as const)(
 	'runs %s after plugin list replacement with the `%s` parser',
 	async (_, parserName, hook, preserveReceiver) => {
-		const parser = getDirectParser(pluginExpandJSON, parserName);
+		const parser = getDirectParser(pluginJSON, parserName);
 		const priorHook = vi.fn((text: string, options: ParserOptions) =>
 			parser[hook]!(text.replace('[', '[2,'), options)
 		);
@@ -906,7 +904,7 @@ test.each([
 					[hook]: priorHook,
 				},
 			},
-			printers: pluginExpandJSON.printers,
+			printers: pluginJSON.printers,
 		};
 
 		const outerPlugin: Plugin = {
@@ -926,17 +924,17 @@ test.each([
 					},
 				},
 			},
-			printers: pluginExpandJSON.printers,
+			printers: pluginJSON.printers,
 		};
 
 		const expectedOutput = await format('{"foo":[2,1]}', {
 			parser: parserName,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const output = await format(TEST_JSON, {
 			parser: parserName,
-			plugins: [innerPlugin, outerPlugin, pluginExpandJSON],
+			plugins: [innerPlugin, outerPlugin, pluginJSON],
 		});
 
 		expect(priorHook).toHaveBeenCalledTimes(1);
@@ -981,7 +979,7 @@ test('preserves parser lifecycle state after plugin list reassignment', async ()
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [lazyPlugin, pluginExpandJSON],
+		plugins: [lazyPlugin, pluginJSON],
 	});
 
 	expect(initializeParser).toHaveBeenCalledTimes(1);
@@ -1011,7 +1009,7 @@ test('preserves reassigned plugins with the current plugin omitted', async () =>
 
 	const replacementPlugins: ParserOptions['plugins'] = [
 		replacementPlugin,
-		pluginExpandJSON,
+		pluginJSON,
 	];
 
 	const { locEnd, locStart } = createLocationFunctions();
@@ -1047,7 +1045,7 @@ test('preserves reassigned plugins with the current plugin omitted', async () =>
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [lazyPlugin, pluginExpandJSON],
+		plugins: [lazyPlugin, pluginJSON],
 	});
 
 	expect(initializeParser).toHaveBeenCalledTimes(1);
@@ -1113,7 +1111,7 @@ test('preserves reassigned plugins without omitted plugins', async () => {
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [lazyPlugin, pluginExpandJSON],
+		plugins: [lazyPlugin, pluginJSON],
 	});
 
 	expect(initializeParser).toHaveBeenCalledTimes(1);
@@ -1126,7 +1124,7 @@ test('preserves reassigned plugins without omitted plugins', async () => {
 });
 
 test('omits resolved lazy plugin copies from prior parser options', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 
 	let observedPlugins: ParserOptions['plugins'] | undefined;
 
@@ -1155,7 +1153,7 @@ test('omits resolved lazy plugin copies from prior parser options', async () => 
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [observingPlugin, lazyPlugin, pluginExpandJSON],
+		plugins: [observingPlugin, lazyPlugin, pluginJSON],
 	});
 
 	expect(initializeParser).toHaveBeenCalledTimes(1);
@@ -1182,7 +1180,7 @@ test('doesn’t initialize shadowed lazy parsers', async () => {
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [lazyPlugin, priorPlugin, pluginExpandJSON],
+		plugins: [lazyPlugin, priorPlugin, pluginJSON],
 	});
 
 	expect(initializeParser).not.toHaveBeenCalled();
@@ -1208,7 +1206,7 @@ test('passes the compatibility options argument to prior parsers', async () => {
 
 	await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [legacyPlugin, pluginExpandJSON],
+		plugins: [legacyPlugin, pluginJSON],
 	});
 
 	const [, options, compatibilityOptions] = parse.mock.lastCall!;
@@ -1217,24 +1215,24 @@ test('passes the compatibility options argument to prior parsers', async () => {
 });
 
 test('matches its own output after wrappers that copy the current parser hooks', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	const wrapperPlugin = createJSONWrapperPlugin({ ...parser });
 
 	const expectedOutput = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [pluginExpandJSON],
+		plugins: [pluginJSON],
 	});
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [wrapperPlugin, pluginExpandJSON],
+		plugins: [wrapperPlugin, pluginJSON],
 	});
 
 	expect(output).toBe(expectedOutput);
 });
 
 test('continues to prior parsers through copied wrappers', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 
 	const priorPlugin: Plugin = {
 		parsers: {
@@ -1249,19 +1247,19 @@ test('continues to prior parsers through copied wrappers', async () => {
 
 	const expectedOutput = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [priorPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, pluginJSON],
 	});
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [priorPlugin, wrapperPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, wrapperPlugin, pluginJSON],
 	});
 
 	expect(output).toBe(expectedOutput);
 });
 
 test('avoids recursion through wrappers that inherit from the current parser', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	let parseCallCount = 0;
 
 	const wrapperParser = {
@@ -1287,7 +1285,7 @@ test('avoids recursion through wrappers that inherit from the current parser', a
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [wrapperPlugin, pluginExpandJSON],
+		plugins: [wrapperPlugin, pluginJSON],
 	});
 
 	expect(output).toBe(expectedOutput);
@@ -1295,7 +1293,7 @@ test('avoids recursion through wrappers that inherit from the current parser', a
 });
 
 test('matches the wrapper’s output when it reuses the current `parse` function', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	const wrapperPlugin = createJSONWrapperPlugin({
 		...parser,
 		preprocess: () => '{"foo":["bar"]}\n',
@@ -1308,14 +1306,14 @@ test('matches the wrapper’s output when it reuses the current `parse` function
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [wrapperPlugin, pluginExpandJSON],
+		plugins: [wrapperPlugin, pluginJSON],
 	});
 
 	expect(output).toBe(expectedOutput);
 });
 
 test('rejects incompatible wrappers before skipping shared hooks', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 
 	const wrapperPlugin = createJSONWrapperPlugin({
 		...parser,
@@ -1326,15 +1324,15 @@ test('rejects incompatible wrappers before skipping shared hooks', async () => {
 	await expect(
 		format(TEST_JSON, {
 			parser: 'json',
-			plugins: [wrapperPlugin, pluginExpandJSON],
+			plugins: [wrapperPlugin, pluginJSON],
 		})
 	).rejects.toThrowErrorMatchingInlineSnapshot(
-		`[TypeError: [prettier-plugin-expand-json] Unsupported AST format for the \`json\` parser. Expected \`estree\` or \`estree-expand-json\`, received \`incompatible-json\`]`
+		`[TypeError: [prettier-plugin-json] Unsupported AST format for the \`json\` parser. Expected \`estree\` or \`prettier-plugin-json.estree\`, received \`incompatible-json\`]`
 	);
 });
 
 test('avoids recursion through wrappers that copy `preprocess`', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	const wrapperPlugin = createJSONWrapperPlugin({
 		...parser,
 		parse: (text, options) => babelParsers.json.parse(text, options),
@@ -1347,7 +1345,7 @@ test('avoids recursion through wrappers that copy `preprocess`', async () => {
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [wrapperPlugin, pluginExpandJSON],
+		plugins: [wrapperPlugin, pluginJSON],
 	});
 
 	expect(output).toBe(expectedOutput);
@@ -1356,7 +1354,7 @@ test('avoids recursion through wrappers that copy `preprocess`', async () => {
 test.each(['after this plugin', 'alone', 'before this plugin'] as const)(
 	'uses location fields from a copied wrapper placed %s only when Prettier selects it',
 	async (placement) => {
-		const parser = getDirectParser(pluginExpandJSON, 'json');
+		const parser = getDirectParser(pluginJSON, 'json');
 
 		const locEnd = vi.fn(babelParsers.json.locEnd);
 		const locStart = vi.fn(babelParsers.json.locStart);
@@ -1388,17 +1386,13 @@ test.each(['after this plugin', 'alone', 'before this plugin'] as const)(
 
 		const expectedResult = await formatWithCursor(TEST_JSON, {
 			...options,
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const plugins = {
-			'after this plugin': [priorPlugin, pluginExpandJSON, wrapperPlugin],
+			'after this plugin': [priorPlugin, pluginJSON, wrapperPlugin],
 			'alone': [priorPlugin, wrapperPlugin],
-			'before this plugin': [
-				priorPlugin,
-				wrapperPlugin,
-				pluginExpandJSON,
-			],
+			'before this plugin': [priorPlugin, wrapperPlugin, pluginJSON],
 		}[placement];
 
 		const isSelectedParser = placement !== 'before this plugin';
@@ -1427,7 +1421,7 @@ test.each([
 ] as const)(
 	'preserves wrapper location overrides from %s when placed %s',
 	async (source, placement) => {
-		const parser = getDirectParser(pluginExpandJSON, 'json');
+		const parser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		let observedLocEnd: Parser['locEnd'] | undefined;
@@ -1467,13 +1461,13 @@ test.each([
 
 		const wrapperPlugin = createJSONWrapperPlugin(wrapperParser);
 		const plugins = {
-			'after this plugin': [priorPlugin, pluginExpandJSON, wrapperPlugin],
+			'after this plugin': [priorPlugin, pluginJSON, wrapperPlugin],
 			'alone': [priorPlugin, wrapperPlugin],
 		}[placement];
 
 		const expectedOutput = await format(TEST_JSON, {
 			parser: 'json',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const output = await format(TEST_JSON, {
@@ -1500,7 +1494,7 @@ test.each([
 ] as const)(
 	'passes location overrides from `%s` wrappers to the prior parser when placed %s',
 	async (hook, placement) => {
-		const parser = getDirectParser(pluginExpandJSON, 'json');
+		const parser = getDirectParser(pluginJSON, 'json');
 		const { locEnd, locStart } = createLocationFunctions();
 
 		let observedLocEnd: Parser['locEnd'] | undefined;
@@ -1545,18 +1539,14 @@ test.each([
 		});
 
 		const plugins = {
-			'after this plugin': [priorPlugin, pluginExpandJSON, wrapperPlugin],
+			'after this plugin': [priorPlugin, pluginJSON, wrapperPlugin],
 			'alone': [priorPlugin, wrapperPlugin],
-			'before this plugin': [
-				priorPlugin,
-				wrapperPlugin,
-				pluginExpandJSON,
-			],
+			'before this plugin': [priorPlugin, wrapperPlugin, pluginJSON],
 		}[placement];
 
 		const expectedOutput = await format(TEST_JSON, {
 			parser: 'json',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const output = await format(TEST_JSON, {
@@ -1584,7 +1574,7 @@ test.each([
 ] as const)(
 	'passes plugin list overrides from `%s` wrappers to the prior parser when placed %s',
 	async (hook, placement) => {
-		const parser = getDirectParser(pluginExpandJSON, 'json');
+		const parser = getDirectParser(pluginJSON, 'json');
 
 		let observedOptions: ParserOptions | undefined;
 		let observedPlugins: ParserOptions['plugins'] | undefined;
@@ -1627,18 +1617,14 @@ test.each([
 		});
 
 		const plugins = {
-			'after this plugin': [priorPlugin, pluginExpandJSON, wrapperPlugin],
+			'after this plugin': [priorPlugin, pluginJSON, wrapperPlugin],
 			'alone': [priorPlugin, wrapperPlugin],
-			'before this plugin': [
-				priorPlugin,
-				wrapperPlugin,
-				pluginExpandJSON,
-			],
+			'before this plugin': [priorPlugin, wrapperPlugin, pluginJSON],
 		}[placement];
 
 		const expectedOutput = await format(TEST_JSON, {
 			parser: 'json',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const output = await format(TEST_JSON, {
@@ -1815,7 +1801,7 @@ test.each([
 test.each(['alone', 'before this plugin'] as const)(
 	'runs wrapped hooks once when placed %s without a prior parser',
 	async (placement) => {
-		const parser = getDirectParser(pluginExpandJSON, 'json');
+		const parser = getDirectParser(pluginJSON, 'json');
 		let parseCallCount = 0;
 		let preprocessCallCount = 0;
 
@@ -1844,12 +1830,12 @@ test.each(['alone', 'before this plugin'] as const)(
 
 		const expectedOutput = await format('{"foo":[3,2,1]}', {
 			parser: 'json',
-			plugins: [pluginExpandJSON],
+			plugins: [pluginJSON],
 		});
 
 		const plugins = {
 			'alone': [wrapperPlugin],
-			'before this plugin': [wrapperPlugin, pluginExpandJSON],
+			'before this plugin': [wrapperPlugin, pluginJSON],
 		}[placement];
 
 		const output = await format(TEST_JSON, { parser: 'json', plugins });
@@ -1861,7 +1847,7 @@ test.each(['alone', 'before this plugin'] as const)(
 );
 
 test('restores parser locations when a wrapper rejects after delegated parsing', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	const { locEnd, locStart } = createLocationFunctions();
 
 	const priorPlugin: Plugin = {
@@ -1902,7 +1888,7 @@ test('restores parser locations when a wrapper rejects after delegated parsing',
 		locEnd: parser.locEnd,
 		locStart: parser.locStart,
 		parser: 'json',
-		plugins: [priorPlugin, wrapperPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, wrapperPlugin, pluginJSON],
 	} as unknown as ParserOptions;
 
 	const originalPlugins = options.plugins;
@@ -1919,7 +1905,7 @@ test('restores parser locations when a wrapper rejects after delegated parsing',
 });
 
 test('preserves locations reset by a wrapper before parsing again', async () => {
-	const parser = getDirectParser(pluginExpandJSON, 'json');
+	const parser = getDirectParser(pluginJSON, 'json');
 	const { locEnd, locStart } = createLocationFunctions();
 
 	let observedParsedLocEnd: Parser['locEnd'] | undefined;
@@ -1970,12 +1956,12 @@ test('preserves locations reset by a wrapper before parsing again', async () => 
 
 	const expectedOutput = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [pluginExpandJSON],
+		plugins: [pluginJSON],
 	});
 
 	const output = await format(TEST_JSON, {
 		parser: 'json',
-		plugins: [priorPlugin, wrapperPlugin, pluginExpandJSON],
+		plugins: [priorPlugin, wrapperPlugin, pluginJSON],
 	});
 
 	expect(observedParsedLocEnd).toBe(locEnd);

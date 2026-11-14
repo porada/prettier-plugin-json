@@ -1,16 +1,16 @@
 <p align="center">
-    <a href="https://github.com/porada/prettier-plugin-expand-json">
+    <a href="https://github.com/porada/prettier-plugin-json">
         <picture>
             <source
-                srcset="https://github.com/porada/prettier-plugin-expand-json/blob/main/.github/assets/prettier-plugin-expand-json-dark-scheme@3x.png?raw=true"
+                srcset="https://github.com/porada/prettier-plugin-json/blob/main/.github/assets/prettier-plugin-json-dark-scheme@3x.png?raw=true"
                 media="(prefers-color-scheme: dark)"
             />
             <source
-                srcset="https://github.com/porada/prettier-plugin-expand-json/blob/main/.github/assets/prettier-plugin-expand-json-light-scheme@3x.png?raw=true"
+                srcset="https://github.com/porada/prettier-plugin-json/blob/main/.github/assets/prettier-plugin-json-light-scheme@3x.png?raw=true"
                 media="(prefers-color-scheme: light)"
             />
             <img
-                src="https://github.com/porada/prettier-plugin-expand-json/blob/main/.github/assets/prettier-plugin-expand-json-light-scheme@3x.png?raw=true"
+                src="https://github.com/porada/prettier-plugin-json/blob/main/.github/assets/prettier-plugin-json-light-scheme@3x.png?raw=true"
                 width="520"
                 alt=""
             />
@@ -18,24 +18,24 @@
     </a>
 </p>
 
-<h1 align="center">prettier-plugin-expand&#8209;json</h1>
+<h1 align="center">prettier-plugin-json</h1>
 
-<p align="center">Expand JSON arrays and objects into multi&#8209;line&nbsp;format with&nbsp;Prettier.</p>
+<p align="center">Additional JSON and&nbsp;JSONC formatting options&nbsp;for&nbsp;Prettier.</p>
 
 <p align="center">
-    <a href="https://npmx.dev/package/prettier-plugin-expand-json"
+    <a href="https://npmx.dev/package/prettier-plugin-json"
         ><img
-            src="https://img.shields.io/npm/v/prettier-plugin-expand-json?style=flat-square"
+            src="https://img.shields.io/npm/v/prettier-plugin-json?style=flat-square"
             alt=""
     /></a>
-    <a href="https://github.com/porada/prettier-plugin-expand-json/actions/workflows/test.yaml"
+    <a href="https://github.com/porada/prettier-plugin-json/actions/workflows/test.yaml"
         ><img
-            src="https://img.shields.io/github/actions/workflow/status/porada/prettier-plugin-expand-json/test.yaml?style=flat-square"
+            src="https://img.shields.io/github/actions/workflow/status/porada/prettier-plugin-json/test.yaml?style=flat-square"
             alt=""
     /></a>
-    <a href="https://codecov.io/github/porada/prettier-plugin-expand-json"
+    <a href="https://codecov.io/github/porada/prettier-plugin-json"
         ><img
-            src="https://img.shields.io/codecov/c/github/porada/prettier-plugin-expand-json?style=flat-square"
+            src="https://img.shields.io/codecov/c/github/porada/prettier-plugin-json?style=flat-square"
             alt=""
     /></a>
 </p>
@@ -45,32 +45,32 @@
 ## Install
 
 ```sh
-npm install --save-dev prettier-plugin-expand-json
+npm install --save-dev prettier-plugin-json
 ```
 
 ```sh
-pnpm add --save-dev prettier-plugin-expand-json
+pnpm add --save-dev prettier-plugin-json
 ```
 
 ## Usage
 
-Reference `prettier-plugin-expand-json` in your [Prettier config](https://prettier.io/docs/configuration):
+Reference `prettier-plugin-json` in your [Prettier config](https://prettier.io/docs/configuration):
 
 ```json
 {
     "plugins": [
-        "prettier-plugin-expand-json"
+        "prettier-plugin-json"
     ]
 }
 ```
 
-If you’re using any other JSON plugins, make sure `prettier-plugin-expand-json` is listed last. This applies to each `overrides` entry as well.
+If you’re using any other JSON plugins, make sure `prettier-plugin-json` is listed last. This applies to each `overrides` entry as well.
 
 ```json
 {
     "plugins": [
         "prettier-plugin-sort-json",
-        "prettier-plugin-expand-json"
+        "prettier-plugin-json"
     ]
 }
 ```
@@ -83,7 +83,7 @@ If you’re using any other JSON plugins, make sure `prettier-plugin-expand-json
             "options": {
                 "plugins": [
                     "prettier-plugin-pkg",
-                    "prettier-plugin-expand-json"
+                    "prettier-plugin-json"
                 ]
             }
         }
@@ -93,7 +93,7 @@ If you’re using any other JSON plugins, make sure `prettier-plugin-expand-json
 
 ## Options
 
-In addition to Prettier’s [built-in options](https://prettier.io/docs/options) that affect JSON formatting, `prettier-plugin-expand-json` offers additional configuration options.
+In addition to Prettier’s [built-in options](https://prettier.io/docs/options) that affect JSON formatting, `prettier-plugin-json` offers additional configuration options.
 
 ```ts
 interface PluginOptions {
