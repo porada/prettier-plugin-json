@@ -105,8 +105,7 @@ function mapNativeContainerGroup(
 }
 
 /**
- * Applies the selected wrapping behavior while preserving Prettier’s output
- * for `inherit`.
+ * Applies the selected wrapping mode. `inherit` preserves Prettier’s output.
  */
 function applyJSONCollectionWrapping(
 	printed: Doc,
@@ -137,7 +136,7 @@ function applyJSONCollectionWrapping(
 }
 
 /**
- * Prints with Prettier before applying the selected wrapping behavior.
+ * Prints with Prettier before applying the selected wrapping mode.
  */
 const printJSON: Printer['print'] = (path, options, print, args) => {
 	const { jsonCollectionWrap = 'inherit' } = options as PluginOptions;

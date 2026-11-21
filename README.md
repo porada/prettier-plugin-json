@@ -98,10 +98,10 @@ In addition to Prettier’s [built-in options](https://prettier.io/docs/options)
 ```ts
 interface PluginOptions {
     /**
-     * Control wrapping for arrays and objects. `collapse` formats collections
-     * on a single line when they fit within the configured line length.
-     * `expand` always uses the multi-line format for non-empty collections.
-     * `inherit` follows Prettier’s wrapping behavior for the current parser.
+     * Choose how non-empty arrays and objects wrap. `collapse` uses one line
+     * when they fit. `expand` puts each item or property on its own line.
+     * `inherit` follows the current parser’s wrapping rules.
+     *
      * @default 'inherit'
      */
     jsonCollectionWrap?: 'collapse' | 'expand' | 'inherit' | undefined;

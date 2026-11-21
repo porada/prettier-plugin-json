@@ -110,17 +110,16 @@ export const options: Plugin['options'] = {
 	...estreeOptions,
 	jsonCollectionWrap: {
 		category: 'JSON',
-		description: 'Control wrapping for arrays and objects.',
+		description: 'Choose how non-empty arrays and objects wrap.',
 		type: 'choice',
 		default: 'inherit',
 		choices: [
 			{
-				description:
-					'Use single-line format when collections fit within the configured line length.',
+				description: 'Use one line when the collection fits.',
 				value: 'collapse',
 			},
 			{
-				description: 'Always use multi-line format.',
+				description: 'Put each item or property on its own line.',
 				value: 'expand',
 			},
 			{

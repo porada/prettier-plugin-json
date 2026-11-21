@@ -53,8 +53,7 @@ export function markParserAsOwn(parser: Parser): Parser {
 }
 
 /**
- * Checks whether a parser carries this plugin’s marker directly
- * or through inheritance.
+ * Checks whether a parser defines or inherits this plugin’s marker.
  */
 function isOwnParser(parser: Parser): boolean {
 	return Reflect.get(parser, PARSER_MARKER) === true;
@@ -158,8 +157,8 @@ export function createPriorParserResolver(
 }
 
 /**
- * Finds the nearest prior compatible parser with a distinct implementation
- * of the requested hook.
+ * Finds the nearest prior compatible parser with a distinct implementation of
+ * the requested hook.
  */
 async function findPriorParser(
 	state: ResolverState,
@@ -201,7 +200,7 @@ async function findPriorParser(
 		const origin = Reflect.get(parser, PARSER_ORIGIN) as
 			ParserOrigin | undefined;
 
-		// Treat the selected copied wrapper as entered, even for lazy parsers
+		// Treat the selected copied wrapper as entered, even for lazy parsers.
 		// This assumes the plugin list has not changed before first entry
 		if (
 			(isSelectedParser && origin !== undefined) ||
