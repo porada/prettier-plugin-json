@@ -15,6 +15,10 @@ const { printers: estreePrinters } = pluginEstree;
 
 const PLUGIN_ESTREE_FORMAT = 'prettier-plugin-json.estree';
 
+/**
+ * Creates a parser that defers to the prior compatible parser before Prettier’s
+ * native parser.
+ */
 function createParser(name: ParserName): Parser {
 	async function parse(
 		text: string,

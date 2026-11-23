@@ -19,6 +19,7 @@ export default defineConfig({
 	staged: {
 		'*': [
 			() => 'pnpm install --frozen-lockfile --ignore-scripts',
+			() => 'pnpm build',
 			'prettier --ignore-unknown --write',
 			() => 'pnpm prepack',
 		],
