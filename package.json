@@ -41,7 +41,7 @@
 		"@standard-config/tsconfig": "^3.2.0",
 		"@vitest/coverage-v8": "5.1.1",
 		"prettier": "^3.10.1",
-		"prettier-plugin-sort-json": "^4.2.0",
+		"prettier-plugin-sort-json": "^4.3.0",
 		"publint": "^0.3.25",
 		"typescript": "^6.0.3",
 		"vite-plus": "^1.8.0"
